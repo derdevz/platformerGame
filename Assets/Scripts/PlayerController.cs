@@ -5,18 +5,20 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
-    [SerializeField] private int _jumpMount = 1;
     [SerializeField] private LayerMask groundLayer;
     private Rigidbody2D rb;
     private Animator _anim;
-    private BoxCollider2D _boxCollider;
+    private CapsuleCollider2D _capsuleCollider;
     private float moveX;
+    private bool jumpRequest = false;
+    private float nextJumpTime = 0f;
+    private float jumpCooldown = 0.2f;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
-        _boxCollider = GetComponent<BoxCollider2D>();
+        _capsuleCollider = GetComponent<CapsuleCollider2D>();
     }
     private void Update()
     {
@@ -24,6 +26,13 @@ public class PlayerController : MonoBehaviour
 
        _anim.SetBool("Run", moveX != 0);
        _anim.SetBool("Grounded", isGrounded());
+
+       if (Input.GetKey(KeyCode.Space) && isGrounded() && Time.time >= nextJumpTime)
+        {
+        jumpRequest = true;
+    
+        nextJumpTime = Time.time + jumpCooldown; 
+        }
     }
     private void FixedUpdate()
     {
@@ -31,34 +40,36 @@ public class PlayerController : MonoBehaviour
 
         if(moveX > 0.01f )
         {
-            transform.localScale = Vector3.one;
+            transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
         }
         
         else if(moveX < -0.01f )
         {
-            transform.localScale = new Vector3(-1, 1, 1);
+            transform.localScale = new Vector3(-0.8f, 0.8f, 0.8f);
         }
 
-        if(Input.GetKey(KeyCode.Space) && isGrounded() == true)
+        if (jumpRequest)
         {
-           Jump();
+            Jump();
+            jumpRequest = false;
         }
     }
 
     private void Jump()
     {
-         rb.linearVelocity = new Vector2(rb.linearVelocity.x, _jumpForce);
-         _anim.SetTrigger("Jump");
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-
+         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0); 
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, _jumpForce);
+        _anim.SetTrigger("Jump");
     }
 
     private bool isGrounded()
     {
-        RaycastHit2D raycastHit = Physics2D.BoxCast(_boxCollider.bounds.center, _boxCollider.bounds.size, 0, Vector2.down, 0.1f, groundLayer);
-        return raycastHit.collider != null;
+        Vector2 boxSize = _capsuleCollider.bounds.size;
+
+        boxSize.x = boxSize.x * 0.8f;
+
+        RaycastHit2D raycastHit = Physics2D.BoxCast(_capsuleCollider.bounds.center, boxSize, 0, Vector2.down, 0.1f, groundLayer);
+          
+         return raycastHit.collider != null;
     }
 }
