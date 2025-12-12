@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Grounded
   - diken
+  - Flag
   layers:
   - Default
   - TransparentFX

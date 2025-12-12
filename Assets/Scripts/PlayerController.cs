@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -6,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private PlayerHealth _healthScript;
     private Rigidbody2D rb;
     private Animator _anim;
     private CapsuleCollider2D _capsuleCollider;
@@ -38,12 +40,12 @@ public class PlayerController : MonoBehaviour
     {
         rb.linearVelocity = new Vector2(moveX * _speed, rb.linearVelocity.y);
 
-        if(moveX > 0.01f )
+        if(moveX > 0.01f)
         {
             transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
         }
         
-        else if(moveX < -0.01f )
+        else if(moveX < -0.01f)
         {
             transform.localScale = new Vector3(-0.8f, 0.8f, 0.8f);
         }
@@ -71,5 +73,18 @@ public class PlayerController : MonoBehaviour
         RaycastHit2D raycastHit = Physics2D.BoxCast(_capsuleCollider.bounds.center, boxSize, 0, Vector2.down, 0.1f, groundLayer);
           
          return raycastHit.collider != null;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("diken"))
+        {
+            _healthScript.Damaged(1);
+        }
+    }
+
+    private void SetCheckPoint()
+    {
+        
     }
 }
