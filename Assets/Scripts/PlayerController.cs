@@ -81,6 +81,11 @@ public class PlayerController : MonoBehaviour
         {
             _healthScript.Damaged(1);
         }
+
+        if (collision.CompareTag("Chicken"))
+        {
+            _healthScript.Damaged(1);
+        }
     }
 
     private void SetCheckPoint()
