@@ -14,8 +14,12 @@ public class ChickenHead : MonoBehaviour
                 _rbPlayer.linearVelocity = new UnityEngine.Vector2(_rbPlayer.linearVelocity.x, 8f);
             }
 
-            Destroy(transform.parent.gameObject);
+            ChickenAI _mainScript = GetComponentInParent<ChickenAI>();
+
+            if (_mainScript != null)
+            {
+                _mainScript.Die();
+            }
         }
     }
-
 }

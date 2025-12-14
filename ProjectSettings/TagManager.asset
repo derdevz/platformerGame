@@ -9,6 +9,10 @@ TagManager:
   - Flag
   - Apple
   - Chicken
+  - Coin
+  - Fireball
+  - Finn
+  - ButtonE
   layers:
   - Default
   - TransparentFX
